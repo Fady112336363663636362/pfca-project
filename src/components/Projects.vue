@@ -1,42 +1,30 @@
 <script setup lang="ts">
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
 import { useRouter } from 'vue-router'
-import { ref } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import apiClient from '@/api/axios' 
+import { useI18n } from 'vue-i18n'
 
+const { locale } = useI18n()
 const router = useRouter()
+const projects = ref<any[]>([])
+const loading = ref(true)
 
-const projects = ref([
-  {
-    id: 1,
-    title: "Modern Packing Facility",
-    description: "A 5,000 sqm state-of-the-art sorting and packing facility doubling our processing capacity and improving efficiency.",
-    image: "https://images.unsplash.com/photo-1581093588401-fbb62a02f120?q=80&w=800"
-  },
-  {
-    id: 2,
-    title: "Sustainable Water Management",
-    description: "Implementing modern drip irrigation systems across 150 farms, reducing water consumption by 40% annually.",
-    image: "https://images.unsplash.com/photo-1464226184884-fa280b87c399?q=80&w=800"
-  },
-  {
-    id: 3,
-    title: "Solar Energy for Farms",
-    description: "Installing solar panels across member farms to reduce energy costs and promote clean farming practices.",
-    image: "https://images.unsplash.com/photo-1509391366360-fe5bb584825a?q=80&w=800"
-  },
-  {
-    id: 4,
-    title: "Organic Farming Transition",
-    description: "Transitioning 50+ farms to certified organic practices for EU and USDA standards for premium export.",
-    image: "https://images.unsplash.com/photo-1592982537447-7440770cbfc9?q=80&w=800"
-  },
-  {
-    id: 5,
-    title: "Community Education Center",
-    description: "Empowering young farmers with digital skills and modern agricultural knowledge for a better future.",
-    image: "https://images.unsplash.com/photo-1590682680695-43b964a3ae17?q=80&w=800"
+const fetchProjects = async () => {
+  try {
+    loading.value = true
+    const response = await apiClient.get('/topics')
+    projects.value = response.data.data
+  } catch (error) {
+    console.error(error)
+  } finally {
+    loading.value = false
   }
-])
+}
+
+onMounted(() => {
+  fetchProjects()
+})
 
 const goToDetails = (id: number) => {
   router.push(`/project/${id}`)
@@ -44,63 +32,69 @@ const goToDetails = (id: number) => {
 </script>
 
 <template>
-  <section class="py-24 bg-white overflow-hidden">
-    <div class="container mx-auto px-6 relative">
+  <section class="py-16 md:py-24 bg-white overflow-hidden" :class="locale === 'ar' ? 'text-right' : 'text-left'">
+    <div class="container mx-auto px-4 md:px-12 lg:px-20 relative">
       
-      <div class="text-center mb-20 space-y-4">
-        <h2 class="text-4xl md:text-5xl font-bold text-[#1e293b] tracking-tight">Our Projects</h2>
-        <p class="text-slate-500 text-lg font-light tracking-wide">Impactful initiatives for sustainable development.</p>
+      <div class="text-center mb-16 space-y-4">
+        <h2 class="text-3xl md:text-5xl font-bold text-[#1e293b] tracking-tight">
+          {{ locale === 'en' ? 'Our Projects' : 'مشاريعنا' }}
+        </h2>
+        <p class="text-slate-500 text-sm md:text-lg font-light max-w-2xl mx-auto italic">
+          {{ locale === 'en' ? 'Impactful initiatives for sustainable development.' : 'مبادرات مؤثرة من أجل التنمية المستدامة.' }}
+        </p>
+      </div>
+
+      <div v-if="loading" class="flex justify-center py-20">
+         <div class="animate-pulse text-teal-600 font-bold">
+           {{ locale === 'en' ? 'Loading Projects...' : 'جاري تحميل المشاريع...' }}
+         </div>
       </div>
 
       <Carousel 
+        v-else
         class="relative w-full"
         :opts="{ align: 'start', loop: true }"
+        :dir="locale === 'ar' ? 'rtl' : 'ltr'"
       >
         
-        <div class="absolute -top-14 right-4 flex items-center gap-3 z-30">
-          <CarouselPrevious class="static translate-y-0 h-10 w-10 rounded-full border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors shadow-sm" />
-          <CarouselNext class="static translate-y-0 h-10 w-10 rounded-full border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors shadow-sm" />
+        <div class="absolute -top-12 md:-top-16 flex items-center gap-3 z-30" :class="locale === 'ar' ? 'left-0 md:left-4' : 'right-0 md:right-4'">
+          <CarouselPrevious class="static translate-y-0 h-10 w-10 rounded-full border border-slate-200 bg-white text-slate-600 hover:bg-[#26d0ce] hover:text-white transition-all shadow-sm" />
+          <CarouselNext class="static translate-y-0 h-10 w-10 rounded-full border border-slate-200 bg-white text-slate-600 hover:bg-[#26d0ce] hover:text-white transition-all shadow-sm" />
         </div>
 
-        <CarouselContent class="-ml-6">
+        <CarouselContent class="-ml-4 md:-ml-6">
           <CarouselItem 
             v-for="project in projects" 
             :key="project.id" 
-            class="pl-6 md:basis-1/2 lg:basis-1/4"
+            class="pl-4 md:pl-6 basis-full sm:basis-1/2 lg:basis-1/4"
           >
             <div 
               @click="goToDetails(project.id)"
-              class="group bg-[#F5F7FA] rounded-[2rem] overflow-hidden flex flex-col h-full cursor-pointer transition-all duration-500 hover:shadow-2xl hover:-translate-y-3"
+              class="group bg-[#F5F7FA] rounded-[1rem] overflow-hidden aspect-square flex flex-col cursor-pointer transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 border border-transparent hover:border-slate-100 relative"
             >
               
-              <div class="h-60 w-full overflow-hidden">
+              <div class="h-1/2 w-full overflow-hidden">
                 <img 
                   :src="project.image" 
-                  class="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-110" 
+                  class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110" 
                   alt="Project Image"
                 />
               </div>
 
-              <div class="p-4 flex flex-col flex-grow text-left space-y-3">
-                <h3 class=" font-serif text-[#000000] leading-tight transition-colors group-hover:text-[#1fb5b3]">
-                  {{ project.title }}
-                </h3>
+              <div class="p-5 md:p-6 flex flex-col flex-grow text-left space-y-2 justify-between" :class="locale === 'ar' ? 'text-right' : 'text-left'">
+                <div>
+                  <h3 class="text-base md:text-lg font-bold text-[#1e293b] leading-tight transition-colors group-hover:text-[#26d0ce] line-clamp-1">
+                    {{ project.title_i18n?.[locale] || project.title }}
+                  </h3>
+                  
+                  <p class="text-[#64748b] text-[13px] md:text-[14px] leading-relaxed line-clamp-2 font-medium">
+                    {{ project.description_i18n?.[locale] || project.description || project.content }}
+                  </p>
+                </div>
                 
-                <p class="text-[#64748b] text-[15px] leading-relaxed flex-grow font-medium">
-                  {{ project.description }}
-                </p>
-                
-                <div class="flex items-center gap-2 text-[#26d0ce] font-bold text-[14px] group/link pt-1">
-                  <span>Project Details</span>
-                  <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    class="h-5 w-5 transition-transform duration-300 group-hover/link:translate-x-2" 
-                    fill="none" 
-                    viewBox="0 0 24 24" 
-                    stroke="currentColor"
-                  >
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                  </svg>
+                <div class="flex items-center gap-2 text-[#26d0ce] font-bold text-[13px] group/link pt-1" :class="locale === 'ar' ? 'flex-row-reverse' : ''">
+                  <span>{{ locale === 'en' ? 'Details' : 'التفاصيل' }}</span>
+                  <font-awesome-icon :icon="locale === 'en' ? 'fa-solid fa-arrow-right' : 'fa-solid fa-arrow-left'" class="text-[10px] transition-transform duration-300 group-hover/link:translate-x-1" />
                 </div>
               </div>
             </div>
@@ -108,19 +102,11 @@ const goToDetails = (id: number) => {
         </CarouselContent>
       </Carousel>
 
-      <div class="flex justify-center mt-20">
-        <button class="bg-[#1e293b] hover:bg-slate-800 text-white px-12 py-4 rounded-full font-bold flex items-center gap-3 transition-all shadow-xl active:scale-95 group/btn">
-          View All Projects
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            class="h-5 w-5 transition-transform group-hover/btn:translate-x-1" 
-            fill="none" 
-            viewBox="0 0 24 24" 
-            stroke="currentColor"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-          </svg>
-        </button>
+      <div class="flex justify-center mt-12 md:mt-16">
+        <RouterLink to="/our-projects" class="bg-[#1e293b] hover:bg-slate-800 text-white px-10 py-4 rounded-full font-bold flex items-center gap-3 transition-all shadow-xl active:scale-95 group/btn">
+          <span>{{ locale === 'en' ? 'View All Projects' : 'عرض جميع المشاريع' }}</span>
+          <font-awesome-icon :icon="locale === 'en' ? 'fa-solid fa-arrow-right' : 'fa-solid fa-arrow-left'" class="text-sm transition-transform group-hover/btn:translate-x-1" />
+        </RouterLink>
       </div>
 
     </div>

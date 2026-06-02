@@ -1,8 +1,8 @@
-import { createRouter, createWebHashHistory } from 'vue-router' // 1. غيرنا الاستدعاء هنا
+import { createRouter, createWebHashHistory } from 'vue-router' 
 import HomeView from '../views/Home.vue'
 
 const router = createRouter({
-  history: createWebHashHistory(import.meta.env.BASE_URL), 
+history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
@@ -30,7 +30,7 @@ const router = createRouter({
       component: () => import('../views/OurProjects.vue') 
     },
      {
-      path: '/project/:id', // هذا المسار الذي يفتح التفاصيل
+      path: '/project/:id', 
       name: 'ProjectDetails',
       component: () => import('../views/ProjectDetailsView.vue')
     },
@@ -75,8 +75,20 @@ const router = createRouter({
       path: '/date-exporters',
       name: 'date-exporters',
       component: () => import('../views/DateExporters.vue')
+    },
+    {
+      path: '/media-gallery',
+      name: 'media-gallery',
+      component: () => import('../views/MediaGalleryView.vue')
     }
-  ]
+  ],
+   scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition;
+    } else {
+      return { top: 0, left: 0 };
+    }
+  },
 })
 
 export default router

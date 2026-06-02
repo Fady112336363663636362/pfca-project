@@ -1,33 +1,43 @@
 <template>
-  <nav class="fixed top-0 left-0 w-full z-50 bg-white border-b border-gray-200 py-3 px-4 md:px-8 shadow-sm">
+  <nav class="fixed top-0 left-0 w-full z-50 bg-white border-b border-gray-200 py-3 px-4 md:px-8 shadow-sm" :dir="locale === 'ar' ? 'rtl' : 'ltr'">
     <div class="max-w-7xl mx-auto flex items-center justify-between">
       
       <div class="flex items-center space-x-4">
-        <img src="/PFCA.png" alt="PFCA Logo" class="h-10 md:h-12 w-auto" />
+        <img 
+          :src="getVal('logo') || '/PFCA.png'" 
+          :alt="getVal('site_name') || 'PFCA Logo'" 
+          class="h-10 md:h-12 w-auto" 
+          :class="locale === 'ar' ? 'ml-4' : ''"
+        />
       </div>
 
-      <div class="hidden lg:flex items-center">
+      <div class="hidden lg:flex items-center space-x-1" :class="locale === 'ar' ? 'space-x-reverse' : ''">
         <RouterLink 
           v-for="(link, index) in navLinks" 
           :key="index"
           :to="link.path"
-          class="px-4 py-2 text-sm font-medium transition-all duration-300"
+          class="px-3 py-2 text-sm font-bold transition-all duration-300"
           :class="[
             $route.path === link.path 
             ? 'bg-[#2D3748] text-white rounded-xl' 
             : 'text-gray-600 hover:text-emerald-600'
           ]"
         >
-          {{ link.name }}
+          {{ $t(link.nameKey) }}
         </RouterLink>
       </div>
 
       <div class="flex items-center gap-2">
-        <button class="flex items-center space-x-2 border border-gray-300 rounded-full px-3 py-1.5 md:px-4 hover:bg-gray-50 transition shadow-sm">
-          <span class="text-xs md:text-sm font-bold">العربية</span>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 md:w-5 md:h-5 text-gray-600">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418" />
-          </svg>
+        
+        <button 
+          @click="toggleLanguage"
+          class="hidden lg:flex items-center border border-gray-300 rounded-full px-4 py-1.5 hover:bg-gray-50 transition shadow-sm active:scale-95"
+          :class="locale === 'ar' ? 'space-x-reverse' : 'space-x-2'"
+        >
+          <span class="text-sm font-bold text-gray-700">
+            {{ locale === 'en' ? 'العربية' : 'English' }}
+          </span>
+          <font-awesome-icon icon="fa-solid fa-globe" class="text-emerald-600" :class="locale === 'ar' ? 'mr-2' : 'ml-2'" />
         </button>
 
         <button 
@@ -57,29 +67,89 @@
         :class="[
           $route.path === link.path 
           ? 'bg-[#2D3748] text-white' 
-          : 'text-gray-600 hover:bg-gray-50 hover:text-emerald-600'
+          : 'text-gray-600 hover:bg-gray-50 hover:text-emerald-600',
+          locale === 'ar' ? 'text-right' : 'text-left'
         ]"
       >
-        {{ link.name }}
+        {{ $t(link.nameKey) }}
       </RouterLink>
+
+      <div class="pt-2 border-t border-gray-50">
+        <button 
+          @click="toggleLanguage(); isMenuOpen = false"
+          class="w-full flex items-center justify-between bg-gray-50 p-4 rounded-xl hover:bg-gray-100 transition active:scale-[0.98]"
+          :class="locale === 'ar' ? 'flex-row-reverse' : ''"
+        >
+           <div class="flex items-center space-x-3" :class="locale === 'ar' ? 'space-x-reverse' : ''">
+             <font-awesome-icon icon="fa-solid fa-globe" class="text-emerald-600 text-lg" />
+             <span class="text-sm font-bold text-gray-700">
+                {{ locale === 'en' ? 'العربية' : 'English' }}
+             </span>
+           </div>
+           <span class="text-xs text-gray-400 font-medium">
+             {{ locale === 'en' ? 'Switch Language' : 'تغيير اللغة' }}
+           </span>
+        </button>
+      </div>
     </div>
   </nav>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue' 
 import { RouterLink } from 'vue-router'
-const isMenuOpen = ref(false) 
+import apiClient from '@/api/axios' 
+import { useI18n } from 'vue-i18n'
 
+const { locale, t } = useI18n()
+const isMenuOpen = ref(false) 
+const settings = ref([]) 
+
+const toggleLanguage = () => {
+  const newLang = locale.value === 'en' ? 'ar' : 'en'
+  locale.value = newLang
+  localStorage.setItem('lang', newLang) 
+  updateDirection()
+}
+
+const updateDirection = () => {
+  const dir = locale.value === 'ar' ? 'rtl' : 'ltr'
+  document.documentElement.dir = dir
+  document.documentElement.lang = locale.value
+  
+  if (dir === 'rtl') {
+    document.body.style.fontFamily = "'Cairo', sans-serif"
+  } else {
+    document.body.style.fontFamily = "'Playfair Display', serif"
+  }
+}
+
+const fetchSettings = async () => {
+  try {
+    const response = await apiClient.get('/settings') 
+    settings.value = response.data.data
+  } catch (error) {
+    console.error("Error loading settings:", error)
+  }
+}
+
+const getVal = (key) => {
+  return settings.value.find(s => s.key === key)?.value || ''
+}
+
+onMounted(() => {
+  updateDirection()
+  fetchSettings()
+})
 
 const navLinks = ref([
-  { name: 'Home', path: '/' },
-  { name: 'About Us', path: '/about' },
-  { name: 'Our Services', path: '/services' },
-  { name: 'Our Products', path: '/products' },
-  { name: 'Our Projects', path: '/our-projects' },
-  { name: 'News & Events', path: '/news' },
-  { name: 'Success Partners', path: '/partners' },
-  { name: 'Contact Us', path: '/contact' },
+  { nameKey: 'nav.home', path: '/' },
+  { nameKey: 'nav.about', path: '/about' },
+  { nameKey: 'nav.services', path: '/services' },
+  { nameKey: 'nav.products', path: '/products' },
+  { nameKey: 'nav.projects', path: '/our-projects' },
+  { nameKey: 'nav.news', path: '/news' },
+  { nameKey: 'nav.partners', path: '/partners' },
+  { nameKey: 'nav.contact', path: '/contact' },
 ])
 </script>
