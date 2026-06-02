@@ -27,4 +27,24 @@ body,
   padding: 0 !important;
   background-color: #F8FAFC; 
 }
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap');
+
+/* 2. توحيد خط Cairo على جميع نصوص وعناصر الموقع بلا استثناء */
+html, 
+body, 
+#app,
+* {
+  font-family: 'Cairo', sans-serif !important;
+}
+
+/* 3. إلغاء الخط السيريف القديم (serif) وتحويله تلقائياً لـ Cairo في السلايدر والعناوين */
+.font-serif,
+h1,
+h2,
+h3,
+h4,
+span,
+p {
+  font-family: 'Cairo', sans-serif !important;
+}
 </style>

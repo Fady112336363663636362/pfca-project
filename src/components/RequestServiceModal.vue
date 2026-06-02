@@ -1,86 +1,87 @@
 <template>
   <Dialog :open="isOpen" @update:open="$emit('close')">
     <DialogContent 
-      class="w-full max-w-[480px] max-h-[90vh] overflow-y-auto rounded-[2rem] p-6 md:p-8 bg-white border-none shadow-2xl flex flex-col"
+      class="w-full max-w-[450px] max-h-[95vh] rounded-[2rem] p-6 md:p-8 bg-white border-none shadow-2xl flex flex-col justify-center"
       :class="locale === 'ar' ? 'text-right' : 'text-left'"
     >
       
       <DialogHeader class="relative shrink-0">
-        <DialogTitle class="text-2xl font-serif text-center mb-2">
-          {{ locale === 'en' ? 'Request Service' : 'طلب خدمة' }}
+        <DialogTitle class="text-2xl font-bold text-[#1e293b] text-center mb-1">
+          {{ locale === 'en' ? 'Request Service' : 'طلب الخدمة' }}
         </DialogTitle>
       </DialogHeader>
 
-      <!-- نموذج الطلب مع اتجاه تلقائي وتوزيع مسافات عمودية متناسق -->
-      <form @submit.prevent="handleSubmit" class="space-y-4 flex-grow" :dir="locale === 'ar' ? 'rtl' : 'ltr'">
+      <!-- نموذج الطلب المضغوط بذكاء ليناسب الشاشات بدون سكرول -->
+      <form @submit.prevent="handleSubmit" class="space-y-3 flex-grow mt-2" :dir="locale === 'ar' ? 'rtl' : 'ltr'">
         
-        <div class="space-y-1.5">
-          <label class="text-sm font-bold text-slate-700 mx-1">
+        <div class="space-y-1">
+          <label class="text-xs font-semibold text-slate-500 block mx-1">
             {{ locale === 'en' ? 'Full Name' : 'الاسم الكامل' }}
           </label>
           <input 
             v-model="formData.fullName"
             type="text" 
             required
-            class="w-full bg-[#F5F7FA] border border-slate-200 rounded-2xl p-3 text-sm focus:outline-none focus:border-[#26d0ce] transition-all"
+            class="w-full bg-[#F5F7FA] border border-slate-100 rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:border-[#20CAC4] focus:bg-white transition-all text-slate-700"
           />
         </div>
 
-        <div class="space-y-1.5">
-          <label class="text-sm font-bold text-slate-700 mx-1">
+        <div class="space-y-1">
+          <label class="text-xs font-semibold text-slate-500 block mx-1">
             {{ locale === 'en' ? 'Phone Number' : 'رقم الهاتف' }}
           </label>
           <input 
             v-model="formData.phone"
             type="tel" 
             required
-            class="w-full bg-[#F5F7FA] border border-slate-200 rounded-2xl p-3 text-sm focus:outline-none focus:border-[#26d0ce] transition-all"
+            class="w-full bg-[#F5F7FA] border border-slate-100 rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:border-[#20CAC4] focus:bg-white transition-all text-slate-700"
           />
         </div>
 
-        <div class="space-y-1.5">
-          <label class="text-sm font-bold text-slate-700 mx-1">
+        <div class="space-y-1">
+          <label class="text-xs font-semibold text-slate-500 block mx-1">
             {{ locale === 'en' ? 'Email Address' : 'البريد الإلكتروني' }}
           </label>
           <input 
             v-model="formData.email"
             type="email" 
             required
-            class="w-full bg-[#F5F7FA] border border-slate-200 rounded-2xl p-3 text-sm focus:outline-none focus:border-[#26d0ce] transition-all"
+            class="w-full bg-[#F5F7FA] border border-slate-100 rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:border-[#20CAC4] focus:bg-white transition-all text-slate-700"
           />
         </div>
 
-        <div class="space-y-1.5">
-          <label class="text-sm font-bold text-slate-700 mx-1">
+        <div class="space-y-1">
+          <label class="text-xs font-semibold text-slate-500 block mx-1">
             {{ locale === 'en' ? 'Country' : 'الدولة' }}
           </label>
           <select 
             v-model="formData.country"
             required
-            class="w-full bg-[#F5F7FA] border border-slate-200 rounded-2xl p-3 text-sm focus:outline-none focus:border-[#26d0ce] transition-all cursor-pointer"
+            class="w-full bg-[#F5F7FA] border border-slate-100 rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:border-[#20CAC4] focus:bg-white transition-all cursor-pointer text-slate-700"
           >
             <option value="" disabled>{{ locale === 'en' ? 'Select Country' : 'اختر الدولة' }}</option>
             <option v-for="c in countries" :key="c" :value="c">{{ c }}</option>
           </select>
         </div>
 
-        <div class="space-y-1.5">
-          <label class="text-sm font-bold text-slate-700 mx-1">
+        <div class="space-y-1">
+          <label class="text-xs font-semibold text-slate-500 block mx-1">
             {{ locale === 'en' ? 'Message' : 'الرسالة' }}
           </label>
           <textarea 
             v-model="formData.message"
-            rows="3"
+            rows="2"
             required
-            class="w-full bg-[#F5F7FA] border border-slate-200 rounded-2xl p-3 text-sm focus:outline-none focus:border-[#26d0ce] transition-all resize-none animate-none"
+            class="w-full bg-[#F5F7FA] border border-slate-100 rounded-xl py-2.5 px-4 text-sm focus:outline-none focus:border-[#20CAC4] focus:bg-white transition-all resize-none text-slate-700"
           ></textarea>
         </div>
 
-        <div class="pt-3">
+        <!-- زر التأكيد الدائري العريض مثل الصورة تماماً بظل ناعم -->
+        <div class="pt-2">
           <Button 
             type="submit"
             :disabled="isSubmitting"
-            class="w-full bg-[#26d0ce] hover:bg-[#1fb5b3] text-white py-6 rounded-full text-base font-bold shadow-lg shadow-teal-500/20 transition-all active:scale-[0.98] disabled:opacity-50"
+            class="w-full bg-[#17C2BD] hover:bg-[#139e9a] text-white py-4 rounded-full text-base font-bold shadow-lg shadow-[#17C2BD]/20 transition-all active:scale-[0.98] disabled:opacity-50"
           >
             {{ isSubmitting ? (locale === 'en' ? 'Sending...' : 'جاري الإرسال...') : (locale === 'en' ? 'Confirm Request' : 'تأكيد الطلب') }}
           </Button>
@@ -152,6 +153,7 @@ const handleSubmit = async () => {
 </script>
 
 <style scoped>
+/* تنسيق زر الإغلاق الدائري العلوي ليكون متناسقاً تماماً كالصورة */
 :deep(.fixed .right-4.top-4) {
   background: #f1f5f9;
   border-radius: 999px;

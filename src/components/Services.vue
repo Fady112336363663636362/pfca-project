@@ -15,9 +15,10 @@
         {{ locale === 'en' ? 'Loading Services...' : 'جاري تحميل الخدمات...' }}
       </div>
 
+      <!-- عرض أول 3 خدمات فقط على الصفحة الرئيسية -->
       <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10 mb-16">
         <div 
-          v-for="(service, index) in services" 
+          v-for="(service, index) in services.slice(0, 3)" 
           :key="index"
           class="group bg-white rounded-[1rem] overflow-hidden shadow-sm transition-all duration-500 hover:shadow-2xl hover:-translate-y-3 flex flex-col border border-slate-50"
         >
@@ -34,14 +35,29 @@
               {{ service.name_i18n?.[locale] || service.name }} 
             </h3>
             
-            <p class="text-slate-500 text-sm md:text-[16px] leading-relaxed flex-grow font-light">
+            <!-- تقييد الوصف بـ 3 أسطر فقط تلقائياً -->
+            <p class="text-slate-500 text-sm md:text-[16px] leading-relaxed flex-grow font-light line-clamp-3">
               {{ service.description_i18n?.[locale] || service.description }}
             </p>
             
+            <!-- تم التعديل هنا: زر "التفاصيل" الأنيق بدون خلفية مع سهم تفاعلي مريح للعين -->
             <div class="pt-2">
-              <button @click="openModal(service.id)" class="bg-[#17C2BD] text-white px-6 py-2.5 rounded-full text-[13px] font-extrabold transition-all shadow-lg active:scale-95">
-                {{ locale === 'en' ? 'Request Service' : 'طلب الخدمة' }}
-              </button>
+              <RouterLink 
+                to="/services" 
+                class="inline-flex items-center gap-2 text-[#17C2BD] hover:text-[#139e9a] font-bold text-[15px] transition-all group/link"
+              >
+                <span>{{ locale === 'en' ? 'Details' : 'التفاصيل' }}</span>
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  class="h-4 w-4 transition-transform duration-300" 
+                  :class="locale === 'en' ? 'group-hover/link:translate-x-1' : 'group-hover/link:-translate-x-1 rotate-180'"
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </RouterLink>
             </div>
           </div>
         </div>
@@ -56,11 +72,6 @@
         </RouterLink>
       </div>
 
-      <RequestServiceModal 
-        :isOpen="isModalOpen" 
-        :serviceId="selectedServiceId"
-        @close="isModalOpen = false" 
-      />
     </div>
   </section>
 </template>
@@ -69,18 +80,10 @@
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import apiClient from '@/api/axios' 
-import RequestServiceModal from './RequestServiceModal.vue'  
 
 const { locale } = useI18n()
-const isModalOpen = ref(false)
-const selectedServiceId = ref(null)
 const services = ref([]) 
 const loading = ref(true)
-
-const openModal = (id) => {
-  selectedServiceId.value = id
-  isModalOpen.value = true
-}
 
 const fetchServices = async () => {
   try {

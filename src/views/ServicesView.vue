@@ -22,7 +22,7 @@
         <div v-for="i in 6" :key="i" class="h-96 bg-gray-200 animate-pulse rounded-[1rem]"></div>
       </div>
 
-      <!-- قائمة عرض الخدمات الديناميكية -->
+      <!-- قائمة عرض الخدمات الديناميكية المحدثة بالكامل -->
       <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
         <div 
           v-for="(service, index) in allServices" 
@@ -42,17 +42,26 @@
               {{ service.name_i18n?.[locale] || service.name }} 
             </h3>
             
-            <p class="text-slate-600 text-[15px] leading-relaxed flex-grow font-light font-sans">
+            <p class="text-slate-600 text-[15px] leading-relaxed flex-grow font-light font-sans line-clamp-3">
               {{ service.description_i18n?.[locale] || service.description }}
             </p>
             
             <div class="pt-4">
-              <!-- تمرير الـ id الخاص بالخدمة المحددة ديناميكياً للـ Modal -->
               <button 
                 @click="openModal(service.id)"
-                class="bg-[#20CAC4] hover:bg-[#1db1ab] text-white px-8 py-3 rounded-full text-[14px] font-bold transition-all shadow-lg shadow-[#20CAC4]/20 active:scale-95"
+                class="inline-flex items-center gap-2 text-[#20CAC4] hover:text-[#1db1ab] font-bold text-[15px] transition-all group/link"
               >
-                {{ locale === 'en' ? 'Request Service' : 'طلب الخدمة' }}
+                <span>{{ locale === 'en' ? 'Details' : 'التفاصيل' }}</span>
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  class="h-4 w-4 transition-transform duration-300" 
+                  :class="locale === 'en' ? 'group-hover/link:translate-x-1' : 'group-hover/link:-translate-x-1 rotate-180'"
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
               </button>
             </div>
           </div>
@@ -62,11 +71,11 @@
 
       <!-- حالة قاعدة البيانات فارغة -->
       <div v-if="!loading && allServices.length === 0" class="text-center py-20 text-slate-400">
-        {{ locale === 'en' ? 'No services available at the moment.' : 'لا توجد خدمات متاحة حالياً.' }}
+        {{ locale === 'en' ? 'No services available at the moment.' : 'لا توجد خدمات متاح حالياً.' }}
       </div>
     </main>
 
-    <!-- ربط الـ Modal مع تمرير الـ Service ID المختار -->
+    <!-- المودال الخاص بطلب الخدمة المحددة -->
     <RequestServiceModal 
       :isOpen="isModalOpen" 
       :serviceId="selectedServiceId"
@@ -88,7 +97,7 @@ const selectedServiceId = ref<number | null>(null)
 const allServices = ref<any[]>([]) 
 const loading = ref(true)
 
-// دالة لفتح المودال وحفظ معرف الخدمة المحدد
+// دالة لحفظ الـ ID وفتح المودال لإرسال الطلب بشكل آمن ومكتمل للسيرفر
 const openModal = (id: number) => {
   selectedServiceId.value = id
   isModalOpen.value = true

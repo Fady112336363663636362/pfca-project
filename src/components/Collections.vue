@@ -18,10 +18,11 @@
         <div v-for="i in 3" :key="i" class="h-80 bg-gray-100 animate-pulse rounded-[1rem]"></div>
       </div>
 
+      <!-- تم تقييد التكرار هنا ليعرض أول 6 فئات فقط -->
       <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         <RouterLink
           to="/products" 
-          v-for="(item, index) in collections" 
+          v-for="(item, index) in collections.slice(0, 6)" 
           :key="index"
           class="group bg-[#F5F7FA] rounded-[1rem] overflow-hidden flex flex-col shadow-sm transition-all duration-500 hover:shadow-2xl hover:-translate-y-3 cursor-pointer"
         >
@@ -56,6 +57,25 @@
               </span>
             </div>
           </div>
+        </RouterLink>
+      </div>
+
+      <!-- إضافة زر عرض جميع الفئات متناسق التوجيه والانعكاس تلقائياً -->
+      <div v-if="!loading && collections.length > 0" class="flex justify-center mt-12 md:mt-16">
+        <RouterLink to="/products"
+          class="bg-[#1e293b] hover:bg-slate-800 text-white px-10 py-4 rounded-full font-bold flex items-center gap-3 transition-all shadow-xl group/btn"
+        >
+          <span>{{ locale === 'en' ? 'View All Collections' : 'عرض جميع الفئات' }}</span>
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            class="h-5 w-5 transition-transform duration-300" 
+            :class="locale === 'en' ? 'group-hover/btn:translate-x-1' : 'group-hover/btn:-translate-x-1 rotate-180'"
+            fill="none" 
+            viewBox="0 0 24 24" 
+            stroke="currentColor"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
         </RouterLink>
       </div>
 

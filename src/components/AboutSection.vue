@@ -30,7 +30,7 @@
             <img 
               :src="getVal('about_main_image') || 'https://images.unsplash.com/photo-1594488687126-7d3d1fef53c4?q=80&w=1000'" 
               alt="Farmers in Jordan Valley" 
-              class="w-full h-full object-cover min-h-[400px]"
+              class="w-full h-[600px] object-cover min-h-[300px]"
             />
           </div>
 

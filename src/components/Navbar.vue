@@ -2,14 +2,16 @@
   <nav class="fixed top-0 left-0 w-full z-50 bg-white border-b border-gray-200 py-3 px-4 md:px-8 shadow-sm" :dir="locale === 'ar' ? 'rtl' : 'ltr'">
     <div class="max-w-7xl mx-auto flex items-center justify-between">
       
-      <div class="flex items-center space-x-4">
+      <router-link to="/"
+      
+      class="flex items-center space-x-4">
         <img 
           :src="getVal('logo') || '/PFCA.png'" 
           :alt="getVal('site_name') || 'PFCA Logo'" 
           class="h-10 md:h-12 w-auto" 
           :class="locale === 'ar' ? 'ml-4' : ''"
         />
-      </div>
+      </router-link>
 
       <div class="hidden lg:flex items-center space-x-1" :class="locale === 'ar' ? 'space-x-reverse' : ''">
         <RouterLink 
@@ -153,3 +155,13 @@ const navLinks = ref([
   { nameKey: 'nav.contact', path: '/contact' },
 ])
 </script>
+
+<style scoped>
+/* 1. استدعاء خط Cairo بوزن Medium 500 */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@500;600;700&display=swap');
+
+.nav-link {
+  font-family: 'Cairo', sans-serif !important;
+  font-weight: 500 !important; /* وزن Medium */
+}
+</style>

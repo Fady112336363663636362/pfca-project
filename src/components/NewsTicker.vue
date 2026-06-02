@@ -3,11 +3,11 @@
     
     <div v-if="newsItems.length > 0" class="flex whitespace-nowrap animate-marquee">
       <div v-for="n in 2" :key="n" class="flex items-center">
-        <div v-for="(item, index) in newsItems" :key="index" class="flex items-center mx-10">
+        <div v-for="(item, index) in newsItems" :key="index" class="flex items-center mx-5">
           <span class="text-zinc-300 text-sm md:text-sm font-medium">
             {{ item }}
           </span>
-          <div class="w-1 h-1 bg-teal-400 rounded-full mx-6"></div>
+          <div class="w-1 h-1 bg-teal-400 rounded-full mx-3"></div>
         </div>
       </div>
     </div>
@@ -62,7 +62,7 @@ watch(locale, () => {
   100% { transform: translateX(-50%); }
 }
 
-[dir="rtl"] @keyframes marquee {
+@keyframes marqueeRTL {
   0% { transform: translateX(0); }
   100% { transform: translateX(50%); }
 }
@@ -70,5 +70,9 @@ watch(locale, () => {
 .animate-marquee {
   display: inline-flex;
   animation: marquee 30s linear infinite;
+}
+
+[dir="rtl"] .animate-marquee {
+  animation: marqueeRTL 30s linear infinite;
 }
 </style>

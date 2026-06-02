@@ -1,36 +1,3 @@
-<script setup lang="ts">
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
-import { useRouter } from 'vue-router'
-import { ref, onMounted, computed } from 'vue'
-import apiClient from '@/api/axios' 
-import { useI18n } from 'vue-i18n'
-
-const { locale } = useI18n()
-const router = useRouter()
-const projects = ref<any[]>([])
-const loading = ref(true)
-
-const fetchProjects = async () => {
-  try {
-    loading.value = true
-    const response = await apiClient.get('/topics')
-    projects.value = response.data.data
-  } catch (error) {
-    console.error(error)
-  } finally {
-    loading.value = false
-  }
-}
-
-onMounted(() => {
-  fetchProjects()
-})
-
-const goToDetails = (id: number) => {
-  router.push(`/project/${id}`)
-}
-</script>
-
 <template>
   <section class="py-16 md:py-24 bg-white overflow-hidden" :class="locale === 'ar' ? 'text-right' : 'text-left'">
     <div class="container mx-auto px-4 md:px-12 lg:px-20 relative">
@@ -57,6 +24,7 @@ const goToDetails = (id: number) => {
         :dir="locale === 'ar' ? 'rtl' : 'ltr'"
       >
         
+        <!-- أسهم التنقل بالأعلى تتوافق تلقائياً مع اتجاه العربية والإنجليزية وتتحرك بسلاسة دون أخطاء -->
         <div class="absolute -top-12 md:-top-16 flex items-center gap-3 z-30" :class="locale === 'ar' ? 'left-0 md:left-4' : 'right-0 md:right-4'">
           <CarouselPrevious class="static translate-y-0 h-10 w-10 rounded-full border border-slate-200 bg-white text-slate-600 hover:bg-[#26d0ce] hover:text-white transition-all shadow-sm" />
           <CarouselNext class="static translate-y-0 h-10 w-10 rounded-full border border-slate-200 bg-white text-slate-600 hover:bg-[#26d0ce] hover:text-white transition-all shadow-sm" />
@@ -75,18 +43,21 @@ const goToDetails = (id: number) => {
               
               <div class="h-1/2 w-full overflow-hidden">
                 <img 
-                  :src="project.image" 
+                  :src="project.image || 'https://via.placeholder.com/600x450?text=Premium+Project'" 
                   class="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110" 
                   alt="Project Image"
                 />
               </div>
 
+              <!-- المحتوى مقسم بالتساوي ومحمي من أي تسريب أو تداخل للنصوص -->
               <div class="p-5 md:p-6 flex flex-col flex-grow text-left space-y-2 justify-between" :class="locale === 'ar' ? 'text-right' : 'text-left'">
-                <div>
-                  <h3 class="text-base md:text-lg font-bold text-[#1e293b] leading-tight transition-colors group-hover:text-[#26d0ce] line-clamp-1">
+                <div class="space-y-1">
+                  <!-- عنوان المشروع: كحد أقصى سطرين لتوفير المساحة للوصف بدقة -->
+                  <h3 class="text-base md:text-lg font-bold text-[#1e293b] leading-tight transition-colors group-hover:text-[#26d0ce] line-clamp-2">
                     {{ project.title_i18n?.[locale] || project.title }}
                   </h3>
                   
+                  <!-- الوصف: كحد أقصى سطرين (يتناسق حجمه تلقائياً بناءً على حجم العنوان) -->
                   <p class="text-[#64748b] text-[13px] md:text-[14px] leading-relaxed line-clamp-2 font-medium">
                     {{ project.description_i18n?.[locale] || project.description || project.content }}
                   </p>
@@ -112,6 +83,39 @@ const goToDetails = (id: number) => {
     </div>
   </section>
 </template>
+
+<script setup lang="ts">
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
+import { useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import apiClient from '@/api/axios' 
+import { useI18n } from 'vue-i18n'
+
+const { locale } = useI18n()
+const router = useRouter()
+const projects = ref<any[]>([])
+const loading = ref(true)
+
+const fetchProjects = async () => {
+  try {
+    loading.value = true
+    const response = await apiClient.get('/topics')
+    projects.value = response.data?.data || []
+  } catch (error) {
+    console.error("Error fetching projects:", error)
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  fetchProjects()
+})
+
+const goToDetails = (id: number) => {
+  router.push(`/project/${id}`)
+}
+</script>
 
 <style scoped>
 .container {
