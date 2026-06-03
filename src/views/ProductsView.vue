@@ -2,10 +2,10 @@
   <div class="min-h-screen bg-[#F5F7FA] pb-24 font-sans" :dir="locale === 'ar' ? 'rtl' : 'ltr'">
     
     <!-- هيدر الصفحة متجاوب وتلقائي الاتجاه -->
-    <header class="bg-[#293043] pt-32 pb-16 md:pt-40 md:pb-24 text-white">
+    <header class="bg-[#293043] pt-30 pb-16 md:pt-25 md:pb-20 text-white">
       <div class="container mx-auto px-6 text-center">
         <div class="max-w-3xl mx-auto space-y-6">
-          <h1 class="text-3xl md:text-5xl lg:text-6xl font-bold font-serif tracking-tight leading-tight">
+          <h1 class="text-4xl md:text-[45px] pt-10 font-bold font-serif leading-tight">
             {{ locale === 'en' ? 'Premium Date Products' : 'منتجات التمور الفاخرة' }}
           </h1>
           <p class="text-slate-300 text-base md:text-xl font-light">

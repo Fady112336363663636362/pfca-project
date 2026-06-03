@@ -35,19 +35,21 @@
           </div>
 
           <div class="p-5 md:p-6 flex flex-col flex-grow space-y-3" :class="locale === 'ar' ? 'text-right' : 'text-left'">
-            <div class="flex items-center gap-2 text-slate-400 text-[11px] md:text-xs font-medium italic" :class="locale === 'ar' ? 'flex-row-reverse' : ''">
-              <font-awesome-icon icon="fa-solid fa-calendar-days" />
-              {{ formatDate(item.created_at) }}
-            </div>
+  
+  <!-- تم تغيير الوزن لـ font-normal وإلغاء كلاس العكس لتظهر الأيقونة أولاً على اليمين فوق العنوان -->
+  <div class="flex items-center gap-2 text-slate-400 text-[11px] md:text-xs font-normal">
+    <font-awesome-icon icon="fa-solid fa-calendar-days" />
+    <span>{{ formatDate(item.created_at) }}</span>
+  </div>
 
-            <h3 class="text-base md:text-lg font-bold text-[#1e293b] leading-tight line-clamp-2 group-hover:text-[#26d0ce] transition-colors font-serif ">
-              {{ item.title_i18n?.[locale] || item.title }}
-            </h3>
+  <h3 class="text-base md:text-lg font-bold text-[#1e293b] leading-tight line-clamp-2 group-hover:text-[#26d0ce] transition-colors font-serif">
+    {{ item.title_i18n?.[locale] || item.title }}
+  </h3>
 
-            <p class="text-slate-500 text-xs md:text-sm leading-relaxed line-clamp-3 font-light">
-              {{ item.description_i18n?.[locale] || item.description || item.content }}
-            </p>
-          </div>
+  <p class="text-slate-500 text-xs md:text-sm leading-relaxed line-clamp-3 font-light">
+    {{ item.description_i18n?.[locale] || item.description || item.content }}
+  </p>
+</div>
         </RouterLink>
       </div>
 
@@ -87,7 +89,7 @@ const formatDate = (dateString: string) => {
 const fetchNews = async () => {
   try {
     loading.value = true
-    const response = await apiClient.get('/topics')
+    const response = await apiClient.get('/news-events')
     newsItems.value = response.data.data.slice(0, 4)
   } catch (error) {
     console.error("Error fetching home news:", error)

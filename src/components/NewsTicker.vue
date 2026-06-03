@@ -29,11 +29,13 @@ const newsItems = ref<string[]>([])
 
 const fetchMarqueeNews = async () => {
   try {
-    const response = await apiClient.get('/topics')
-    
+    const response = await apiClient.get('/news-events')
+    console.log("==========================================================================")
+      console.log(response);
+      
     if (response.data && Array.isArray(response.data.data)) {
       const titles = response.data.data.map((item: any) => {
-        return item.title_i18n?.[locale.value] || item.title
+        return item.description_i18n?.[locale.value]
       }).filter(Boolean)
 
       newsItems.value = titles

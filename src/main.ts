@@ -22,7 +22,7 @@ import {
   faFile,
   faEnvelope,
   faPhone,
-  faLocationDot,faCalendarDays ,faCircleCheck,
+  faLocationDot,faCalendarDays ,faCircleCheck,faArrowLeft,faCalendar
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -40,7 +40,7 @@ library.add(
   faFile,
   faEnvelope,
   faPhone,
-  faLocationDot,faCalendarDays ,faCircleCheck,faLocationDot
+  faLocationDot,faCalendarDays ,faCircleCheck,faLocationDot,faArrowLeft,faCalendar
 )
 
 const app = createApp(App)

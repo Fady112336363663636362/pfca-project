@@ -99,8 +99,13 @@ const loading = ref(true)
 const fetchProjects = async () => {
   try {
     loading.value = true
-    const response = await apiClient.get('/topics')
-    projects.value = response.data?.data || []
+    const response = await apiClient.get('/projects')
+    console.log("==========================================================================") 
+  
+   console.log("Fetched projects:", response.data) // تحقق من البيانات المستلمة
+   console.log("==========================================================================") 
+  
+   projects.value = response.data?.data || []
   } catch (error) {
     console.error("Error fetching projects:", error)
   } finally {

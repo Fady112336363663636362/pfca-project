@@ -43,7 +43,7 @@
             </p>
             
             <div class="flex items-center gap-2 text-[#0ABAB5] font-bold text-[16px] group/link pt-2 transition-all">
-              <span>{{ locale === 'en' ? 'Project Details' : 'تفاصيل المشروع' }}</span>
+              <span>{{ locale === 'en' ? ' Details' : 'تفاصيل' }}</span>
               <svg 
                 xmlns="http://www.w3.org/2000/svg" 
                 class="h-5 w-5 transition-transform duration-300" 
@@ -80,7 +80,7 @@ const loading = ref(true)
 const fetchProjects = async () => {
   try {
     loading.value = true
-    const response = await apiClient.get('/topics')
+    const response = await apiClient.get('/projects')
     allProjects.value = response.data?.data || []
   } catch (error) {
     console.error("Error fetching projects:", error)

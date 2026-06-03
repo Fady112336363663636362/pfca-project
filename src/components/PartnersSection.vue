@@ -18,15 +18,23 @@
           class="group bg-[#F5F7FA] rounded-2xl py-5 px-3 flex flex-col items-center justify-center transition-all duration-300 hover:bg-[#F0FDFA] hover:border-[#26d0ce] border border-transparent min-w-0"
           :class="{'bg-[#F0FDFA] border-[#26d0ce]': partner.is_active}" 
         >
+        
           <div 
             class="w-12 h-12 rounded-2xl flex items-center justify-center text-lg font-bold transition-colors bg-slate-200 text-slate-600 group-hover:bg-[#26d0ce]/20 group-hover:text-[#26d0ce] shrink-0"
           >
-            {{ getInitials(partner.name_i18n?.[locale] || partner.name) }}
+            <img 
+              v-if="partner.logo" 
+              :src="partner.logo" 
+              alt="Partner Logo" 
+              class="w-full h-full object-contain"
+            /> 
           </div>
 
           <span class="text-xs md:text-sm font-bold text-center transition-colors group-hover:text-[#26d0ce] mt-3 break-words w-full px-1 line-clamp-2 leading-tight">
             {{ partner.name_i18n?.[locale] || partner.name }}
           </span>
+           
+         
         </RouterLink>
       </div>
 

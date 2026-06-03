@@ -18,7 +18,7 @@ const tabs = computed(() => [
 const fetchMedia = async () => {
   try {
     loading.value = true
-    const response = await apiClient.get('/topics')
+    const response = await apiClient.get('/projects')
     
     mediaItems.value = response.data.data.map((item: any) => ({
       id: item.id,

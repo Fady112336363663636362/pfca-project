@@ -47,8 +47,8 @@
             </p>
             
             <div class="pt-4">
-              <button 
-                @click="openModal(service.id)"
+              <router-link 
+                :to="`/services/${service.id}`"
                 class="inline-flex items-center gap-2 text-[#20CAC4] hover:text-[#1db1ab] font-bold text-[15px] transition-all group/link"
               >
                 <span>{{ locale === 'en' ? 'Details' : 'التفاصيل' }}</span>
@@ -62,7 +62,7 @@
                 >
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
-              </button>
+              </router-link>
             </div>
           </div>
 

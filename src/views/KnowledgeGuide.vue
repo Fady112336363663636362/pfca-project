@@ -75,7 +75,7 @@ const loading = ref(true)
 const fetchGuides = async () => {
   try {
     loading.value = true
-    const response = await apiClient.get('/topics')
+    const response = await apiClient.get('/projects')
     guides.value = response.data.data
   } catch (error) {
     console.error("Error fetching knowledge guides:", error)

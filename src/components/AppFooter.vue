@@ -23,7 +23,7 @@
         </div>
 
         <div class="space-y-6">
-          <h3 class="text-xl font-bold font-serif italic tracking-wide text-white">
+          <h3 class="text-xl font-bold font-serif  tracking-wide text-white">
             {{ locale === 'en' ? 'Important Links' : 'روابط هامة' }}
           </h3>
           <ul class="space-y-4 text-slate-400">
@@ -35,7 +35,7 @@
         </div>
 
         <div class="space-y-6">
-          <h3 class="text-xl font-bold font-serif italic tracking-wide text-white">
+          <h3 class="text-xl font-bold font-serif tracking-wide text-white">
             {{ locale === 'en' ? 'Quick Links' : 'روابط سريعة' }}
           </h3>
           <ul class="space-y-4 text-slate-400">
@@ -46,7 +46,7 @@
         </div>
 
         <div class="space-y-6">
-          <h3 class="text-xl font-bold font-serif italic tracking-wide text-white">
+          <h3 class="text-xl font-bold font-serif tracking-wide text-white">
             {{ locale === 'en' ? 'Association Location' : 'موقع الجمعية' }}
           </h3>
           <div class="rounded-2xl overflow-hidden h-32 w-full relative group shadow-inner border border-slate-700/50">

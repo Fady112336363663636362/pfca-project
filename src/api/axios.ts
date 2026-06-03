@@ -8,4 +8,8 @@ const apiClient = axios.create({
   }
 });
 
+    const NEWS_EVENT_URL = '/news-events';
+    const newsEvents = await apiClient.get(NEWS_EVENT_URL);
+
+
 export default apiClient;
