@@ -29,10 +29,7 @@ const newsItems = ref<string[]>([])
 
 const fetchMarqueeNews = async () => {
   try {
-    const response = await apiClient.get('/news-events')
-    console.log("==========================================================================")
-      console.log(response);
-      
+    const response = await apiClient.get('/news-events')     
     if (response.data && Array.isArray(response.data.data)) {
       const titles = response.data.data.map((item: any) => {
         return item.description_i18n?.[locale.value]
@@ -61,12 +58,12 @@ watch(locale, () => {
 <style scoped>
 @keyframes marquee {
   0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  100% { transform: translateX(-15%); }
 }
 
 @keyframes marqueeRTL {
   0% { transform: translateX(0); }
-  100% { transform: translateX(50%); }
+  100% { transform: translateX(15%); }
 }
 
 .animate-marquee {

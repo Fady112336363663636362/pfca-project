@@ -54,15 +54,15 @@
       </CarouselItem>
     </CarouselContent>
 
-    <!-- أزرار التحكم مخصصة ومخفية على الموبايل لتفادي تداخل العناصر -->
+    <!-- أزرار التحكم مجهزة بحجم متجاوب (h-10 على الجوال وتكبر تلقائياً على الشاشات الأكبر) وتظهر دائماً للتقليب -->
      <CarouselPrevious 
-      class="absolute top-1/2 -translate-y-1/2 h-12 w-12 bg-white/10 hover:bg-[#20CAC4] text-white border-none transition-all hidden sm:flex items-center justify-center rounded-full z-30"
-      :class="locale === 'ar' ? 'right-4 md:right-8' : 'left-4 md:left-8'" 
+      class="absolute top-1/2 -translate-y-1/2 h-10 w-10 sm:h-12 sm:w-12 bg-white/10 hover:bg-[#20CAC4] text-white border-none transition-all flex items-center justify-center rounded-full z-30"
+      :class="locale === 'ar' ? 'right-2 sm:right-4 md:right-8' : 'left-2 sm:left-4 md:left-8'" 
     />
     
     <CarouselNext 
-      class="absolute top-1/2 -translate-y-1/2 h-12 w-12 bg-white/10 hover:bg-[#20CAC4] text-white border-none transition-all hidden sm:flex items-center justify-center rounded-full z-30"
-      :class="locale === 'ar' ? 'left-4 md:left-8' : 'right-4 md:right-8'" 
+      class="absolute top-1/2 -translate-y-1/2 h-10 w-10 sm:h-12 sm:w-12 bg-white/10 hover:bg-[#20CAC4] text-white border-none transition-all flex items-center justify-center rounded-full z-30"
+      :class="locale === 'ar' ? 'left-2 sm:left-4 md:left-8' : 'right-2 sm:right-4 md:right-8'" 
     />
   </Carousel>
 

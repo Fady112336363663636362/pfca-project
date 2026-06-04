@@ -1,12 +1,13 @@
 <template>
-  <section class="py-16 md:py-24 bg-white overflow-hidden" :class="locale === 'ar' ? 'text-right' : 'text-left'">
+  <section class="py-16 md:py-24 bg-white overflow-hidden" :dir="locale === 'ar' ? 'rtl' : 'ltr'">
     <div class="container mx-auto px-4 md:px-12 lg:px-20 relative">
       
+      <!-- عنوان وجزء الوصف للقسم -->
       <div class="text-center mb-16 space-y-4">
         <h2 class="text-3xl md:text-5xl font-bold text-[#1e293b] tracking-tight">
           {{ locale === 'en' ? 'Our Projects' : 'مشاريعنا' }}
         </h2>
-        <p class="text-slate-500 text-sm md:text-lg font-light max-w-2xl mx-auto italic">
+        <p class="text-slate-500 text-sm md:text-lg font-light max-w-2xl mx-auto">
           {{ locale === 'en' ? 'Impactful initiatives for sustainable development.' : 'مبادرات مؤثرة من أجل التنمية المستدامة.' }}
         </p>
       </div>
@@ -17,19 +18,16 @@
          </div>
       </div>
 
-      <Carousel 
-        v-else
-        class="relative w-full"
-        :opts="{ align: 'start', loop: true }"
-        :dir="locale === 'ar' ? 'rtl' : 'ltr'"
-      >
-        
-        <!-- أسهم التنقل بالأعلى تتوافق تلقائياً مع اتجاه العربية والإنجليزية وتتحرك بسلاسة دون أخطاء -->
-        <div class="absolute -top-12 md:-top-16 flex items-center gap-3 z-30" :class="locale === 'ar' ? 'left-0 md:left-4' : 'right-0 md:right-4'">
-          <CarouselPrevious class="static translate-y-0 h-10 w-10 rounded-full border border-slate-200 bg-white text-slate-600 hover:bg-[#26d0ce] hover:text-white transition-all shadow-sm" />
-          <CarouselNext class="static translate-y-0 h-10 w-10 rounded-full border border-slate-200 bg-white text-slate-600 hover:bg-[#26d0ce] hover:text-white transition-all shadow-sm" />
-        </div>
-
+   <Carousel 
+  v-else
+  class="relative w-full"
+  :opts="{ 
+    align: 'start', 
+    loop: true, 
+    direction: locale === 'ar' ? 'rtl' : 'ltr' 
+  }"
+  :dir="locale === 'ar' ? 'rtl' : 'ltr'"
+>
         <CarouselContent class="-ml-4 md:-ml-6">
           <CarouselItem 
             v-for="project in projects" 
@@ -49,21 +47,22 @@
                 />
               </div>
 
-              <!-- المحتوى مقسم بالتساوي ومحمي من أي تسريب أو تداخل للنصوص -->
-              <div class="p-5 md:p-6 flex flex-col flex-grow text-left space-y-2 justify-between" :class="locale === 'ar' ? 'text-right' : 'text-left'">
+              <!-- تفاصيل محتوى الكارد بالتوجيه الطبيعي -->
+              <div class="p-5 md:p-6 flex flex-col flex-grow space-y-2 justify-between">
                 <div class="space-y-1">
-                  <!-- عنوان المشروع: كحد أقصى سطرين لتوفير المساحة للوصف بدقة -->
+                  <!-- عنوان المشروع: كحد أقصى سطرين -->
                   <h3 class="text-base md:text-lg font-bold text-[#1e293b] leading-tight transition-colors group-hover:text-[#26d0ce] line-clamp-2">
                     {{ project.title_i18n?.[locale] || project.title }}
                   </h3>
                   
-                  <!-- الوصف: كحد أقصى سطرين (يتناسق حجمه تلقائياً بناءً على حجم العنوان) -->
+                  <!-- الوصف: كحد أقصى سطرين -->
                   <p class="text-[#64748b] text-[13px] md:text-[14px] leading-relaxed line-clamp-2 font-medium">
                     {{ project.description_i18n?.[locale] || project.description || project.content }}
                   </p>
                 </div>
                 
-                <div class="flex items-center gap-2 text-[#26d0ce] font-bold text-[13px] group/link pt-1" :class="locale === 'ar' ? 'flex-row-reverse' : ''">
+                <!-- تفاصيل الرابط والسهم المنعكس تلقائياً -->
+                <div class="flex items-center gap-2 text-[#26d0ce] font-bold text-[13px] group/link pt-1">
                   <span>{{ locale === 'en' ? 'Details' : 'التفاصيل' }}</span>
                   <font-awesome-icon :icon="locale === 'en' ? 'fa-solid fa-arrow-right' : 'fa-solid fa-arrow-left'" class="text-[10px] transition-transform duration-300 group-hover/link:translate-x-1" />
                 </div>
@@ -71,6 +70,26 @@
             </div>
           </CarouselItem>
         </CarouselContent>
+
+        <!-- 🟢 أزرار التنقل بالمنتصف تم إبعادها للخارج قليلاً (lg:-left-12) مع شرط الظهور الديناميكي الذكي 🟢 -->
+        <CarouselPrevious 
+          v-if="showArrows"
+          class="absolute top-1/2 -translate-y-1/2 h-10 w-10 rounded-full border border-slate-200 bg-white text-slate-600 hover:bg-[#26d0ce] hover:text-white transition-all shadow-sm z-30 left-2 lg:-left-12"
+          :class="[
+            projects.length <= 4 ? 'lg:hidden' : 'lg:flex',
+            projects.length <= 2 ? 'md:hidden' : 'md:flex',
+            projects.length <= 1 ? 'hidden' : 'flex'
+          ]"
+        />
+        <CarouselNext 
+          v-if="showArrows"
+          class="absolute top-1/2 -translate-y-1/2 h-10 w-10 rounded-full border border-slate-200 bg-white text-slate-600 hover:bg-[#26d0ce] hover:text-white transition-all shadow-sm z-30 right-2 lg:-right-12"
+          :class="[
+            projects.length <= 4 ? 'lg:hidden' : 'lg:flex',
+            projects.length <= 2 ? 'md:hidden' : 'md:flex',
+            projects.length <= 1 ? 'hidden' : 'flex'
+          ]"
+        />
       </Carousel>
 
       <div class="flex justify-center mt-12 md:mt-16">
@@ -87,7 +106,7 @@
 <script setup lang="ts">
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
 import { useRouter } from 'vue-router'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import apiClient from '@/api/axios' 
 import { useI18n } from 'vue-i18n'
 
@@ -96,16 +115,14 @@ const router = useRouter()
 const projects = ref<any[]>([])
 const loading = ref(true)
 
+// دالة فحص لتحديد الحاجة المبدئية للأسهم
+const showArrows = computed(() => projects.value.length > 1)
+
 const fetchProjects = async () => {
   try {
     loading.value = true
     const response = await apiClient.get('/projects')
-    console.log("==========================================================================") 
-  
-   console.log("Fetched projects:", response.data) // تحقق من البيانات المستلمة
-   console.log("==========================================================================") 
-  
-   projects.value = response.data?.data || []
+    projects.value = response.data?.data || []
   } catch (error) {
     console.error("Error fetching projects:", error)
   } finally {

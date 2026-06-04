@@ -27,11 +27,11 @@
 
         <div class="relative" :class="locale === 'ar' ? 'order-1 lg:order-2' : 'order-1 lg:order-2'">
           <div class="rounded-[2rem] overflow-hidden shadow-2xl relative z-10">
-            <img 
-              :src="getVal('about_main_image') || 'https://images.unsplash.com/photo-1594488687126-7d3d1fef53c4?q=80&w=1000'" 
-              alt="Farmers in Jordan Valley" 
-              class="w-full h-[600px] object-cover min-h-[300px]"
-            />
+          <img 
+  :src="getVal('about_main_image') || 'https://images.unsplash.com/photo-1594488687126-7d3d1fef53c4?q=80&w=1000'" 
+  alt="Farmers in Jordan Valley" 
+  class="w-full h-[300px] sm:h-[450px] md:h-[300px] lg:h-[500px] object-cover rounded-2xl md:rounded-[2rem] shadow-md"
+/>
           </div>
 
           <div 
