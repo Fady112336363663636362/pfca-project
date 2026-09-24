@@ -1,33 +1,35 @@
 <template>
   <Carousel 
     v-if="!isLoading && slides.length > 0"
+    :key="locale"
+    @init-api="setApi"
     :plugins="[Autoplay({ delay: 6000, stopOnInteraction: false })]"
-    class="relative w-full h-[500px] sm:h-[650px] md:h-[800px] lg:h-[900px] xl:h-[1000px] overflow-hidden"
+    :opts="{ 
+      direction: locale === 'ar' ? 'rtl' : 'ltr',
+      loop: true 
+    }"
     :dir="locale === 'ar' ? 'rtl' : 'ltr'"
+    class="relative w-full h-[500px] sm:h-[650px] md:h-[800px] lg:h-[900px] xl:h-[1000px] overflow-hidden fade-in-carousel"
   >
     <CarouselContent>
       <CarouselItem v-for="(slide, index) in slides" :key="index">
-        <!-- الحاوية متجاوبة الارتفاع لجميع الشاشات -->
         <div class="relative h-[500px] sm:h-[650px] md:h-[800px] lg:h-[900px] xl:h-[1000px] w-full group">
           
-          <!-- صورة السلايدر مع أنيميشن زوم طفيف -->
           <img 
             :src="getImageUrl(slide.image)" 
             class="w-full h-full object-cover transition-transform duration-[1500ms] scale-102 group-hover:scale-105" 
             alt="Hero Image" 
           />
           
-          <!-- تظليل الخلفية واستقبال المحتوى بالتوجيه التلقائي -->
           <div class="absolute inset-0 bg-black/50 flex items-center justify-start"
                :class="locale === 'ar' ? 'px-6 sm:px-12 md:pr-40 md:pl-8 text-right' : 'px-6 sm:px-12 md:pl-40 md:pr-8 text-left'">
             
-            <!-- نصوص السلايدر مع حركة صعود وتلاشي ناعم عند الظهور -->
             <div class="max-w-3xl text-white slide-content-animate space-y-4 md:space-y-6">
               <h1 class="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-serif leading-tight uppercase font-bold">
                 {{ slide.title_i18n?.[locale] || slide.title }}
               </h1>
               
-              <p class="text-sm sm:text-lg md:text-xl lg:text-2xl text-gray-200 font-light max-w-2xl">
+              <p class="text-sm sm:text-lg md:text-xl lg:text-2xl text-gray-200 font-light max-w-2xl font-sans">
                 {{ slide.description_i18n?.[locale] || slide.description }}
               </p>
               
@@ -54,20 +56,26 @@
       </CarouselItem>
     </CarouselContent>
 
-    <!-- أزرار التحكم مجهزة بحجم متجاوب (h-10 على الجوال وتكبر تلقائياً على الشاشات الأكبر) وتظهر دائماً للتقليب -->
-     <CarouselPrevious 
-      class="absolute top-1/2 -translate-y-1/2 h-10 w-10 sm:h-12 sm:w-12 bg-white/10 hover:bg-[#20CAC4] text-white border-none transition-all flex items-center justify-center rounded-full z-30"
-      :class="locale === 'ar' ? 'right-2 sm:right-4 md:right-8' : 'left-2 sm:left-4 md:left-8'" 
-    />
+    <button 
+      @click="handlePrev"
+      type="button"
+      class="absolute top-1/2 -translate-y-1/2 h-10 w-10 sm:h-12 sm:w-12 bg-white/10 hover:bg-[#20CAC4] text-white border-none transition-all flex items-center justify-center rounded-full z-30 left-4 sm:left-6 md:left-8 cursor-pointer"
+      aria-label="Previous slide"
+    >
+      <font-awesome-icon icon="fa-solid fa-chevron-left" class="text-sm sm:text-base" />
+    </button>
     
-    <CarouselNext 
-      class="absolute top-1/2 -translate-y-1/2 h-10 w-10 sm:h-12 sm:w-12 bg-white/10 hover:bg-[#20CAC4] text-white border-none transition-all flex items-center justify-center rounded-full z-30"
-      :class="locale === 'ar' ? 'left-2 sm:left-4 md:left-8' : 'right-2 sm:right-4 md:right-8'" 
-    />
+    <button 
+      @click="handleNext"
+      type="button"
+      class="absolute top-1/2 -translate-y-1/2 h-10 w-10 sm:h-12 sm:w-12 bg-white/10 hover:bg-[#20CAC4] text-white border-none transition-all flex items-center justify-center rounded-full z-30 right-4 sm:right-6 md:right-8 cursor-pointer"
+      aria-label="Next slide"
+    >
+      <font-awesome-icon icon="fa-solid fa-chevron-right" class="text-sm sm:text-base" />
+    </button>
   </Carousel>
 
-  <!-- واجهة تحميل السلايدر متجاوبة الارتفاع -->
-  <div v-else-if="isLoading" class="w-full h-[500px] sm:h-[650px] md:h-[800px] lg:h-[900px] xl:h-[1000px] bg-slate-950 flex items-center justify-center text-white">
+  <div v-else class="w-full h-[500px] sm:h-[650px] md:h-[800px] lg:h-[900px] xl:h-[1000px] bg-slate-950 flex items-center justify-center text-white">
       <div class="animate-pulse flex flex-col items-center gap-3">
         <div class="w-10 h-10 border-4 border-t-[#20CAC4] border-slate-700 rounded-full animate-spin"></div>
         <span class="text-sm text-slate-400">{{ locale === 'en' ? 'Loading Sliders...' : 'جاري التحميل...' }}</span>
@@ -76,26 +84,52 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import apiClient from '@/api/axios' 
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
+import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel'
 import Autoplay from 'embla-carousel-autoplay'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { useI18n } from 'vue-i18n' 
 
+// Import standard types directly from the package to control Embla programmatically
+import type { CarouselApi } from '@/components/ui/carousel'
+
 const { locale } = useI18n() 
 const slides = ref<any[]>([])
 const isLoading = ref(true)
+const carouselApi = ref<CarouselApi>()
+
+// Captures the underlying instance from Shadcn
+const setApi = (val: CarouselApi) => {
+  carouselApi.value = val
+}
+
+// Triggers the logical directional scroll step
+const handlePrev = () => {
+  if (!carouselApi.value) return
+  carouselApi.value.scrollPrev()
+}
+
+const handleNext = () => {
+  if (!carouselApi.value) return
+  carouselApi.value.scrollNext()
+}
 
 const fetchSliders = async () => {
   try {
     const response = await apiClient.get('/sliders')
-    // حماية المصفوفة بإسناد قيمة افتراضية فارغة
-    slides.value = response.data?.data || []
+    const data = response.data?.data || []
+    
+    if (data.length > 0) {
+      slides.value = data
+      await nextTick()
+    }
   } catch (error) {
     console.error("Error fetching sliders:", error)
   } finally {
-    isLoading.value = false
+    setTimeout(() => {
+      isLoading.value = false
+    }, 100)
   }
 }
 
@@ -118,17 +152,20 @@ const getImageUrl = (url: string) => {
 .font-serif { font-family: 'Playfair Display', serif; }
 
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .slide-content-animate {
   animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.fade-in-carousel {
+  animation: fadeInCarousel 0.4s ease-in-out;
+}
+
+@keyframes fadeInCarousel {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 </style>

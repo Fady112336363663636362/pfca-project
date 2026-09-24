@@ -20,9 +20,9 @@ history: createWebHashHistory(import.meta.env.BASE_URL),
       component: () => import('../views/ServicesView.vue')
     },
     {
-  path: '/services/:id',
-  name: 'ServiceDetails',
-  component: () => import('@/views/ServiceDetailsView.vue') // عدل مسار الملف حسب مشروعك
+      path: '/services/:id',
+      name: 'ServiceDetails',
+      component: () => import('@/views/ServiceDetailsView.vue') 
     },
     {
       path: '/products',
@@ -54,8 +54,12 @@ history: createWebHashHistory(import.meta.env.BASE_URL),
       name: 'contact',
       component: () => import('../views/ContactUs.vue') 
     },
-  { path: '/product/:id', name: 'product-details', component: () => import('../views/ProductDetailsView.vue') },
-
+    {
+       path: '/product/:id',
+       name: 'product-details', 
+       component: () => import('../views/ProductDetailsView.vue')
+      
+  },
     {
       path: '/news/:id',
       name: 'NewsDetails',

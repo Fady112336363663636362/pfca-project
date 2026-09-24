@@ -4,12 +4,12 @@
       
       <div class="text-center mb-10 md:mb-16">
         <h2 class="text-3xl md:text-4xl font-serif text-[#1e293b] mb-4">
-          {{ locale === 'en' ? 'Premium Date Collections' : 'مجموعات التمور الفاخرة' }}
+          {{ locale === 'en' ? ' Collections' : 'التصنيفات' }}
         </h2>
         <p class="text-slate-500 max-w-2xl mx-auto text-sm md:text-base">
           {{ locale === 'en' 
-            ? 'Explore our diverse range of premium dates, each cultivated with care and expertise.' 
-            : 'استكشف مجموعتنا المتنوعة من التمور الفاخرة، التي تمت زراعتها بعناية وخبرة فائقة.' 
+            ? 'Explore our diverse categories.' 
+            : 'استكشف مجموعتنا المتنوعة .' 
           }}
         </p>
       </div>
@@ -17,8 +17,6 @@
       <div v-if="loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         <div v-for="i in 3" :key="i" class="h-80 bg-gray-100 animate-pulse rounded-[1rem]"></div>
       </div>
-
-      <!-- تم تقييد التكرار هنا ليعرض أول 6 فئات فقط -->
       <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         <RouterLink
           to="/products" 

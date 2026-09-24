@@ -69,7 +69,7 @@ watch(() => route.params.id, fetchPartnerData)
     <main class="container mx-auto px-6 -mt-16 flex flex-col items-center">
       
       <div class="bg-[#26d0ce] text-white w-32 h-32 rounded-[2.5rem] overflow-hidden flex items-center justify-center text-4xl font-bold shadow-2xl shadow-teal-500/20 border-8 border-white z-10 transition-transform hover:scale-105 duration-500">
-        <img v-if="partner.image" :src="partner.image" class="w-full h-full object-contain p-4 bg-white" />
+        <img v-if="partner.logo" :src="partner.logo" class="w-full h-full object-contain p-4 bg-white" />
         <span v-else>{{ getInitials(partner.name) }}</span>
       </div>
 
@@ -96,9 +96,3 @@ watch(() => route.params.id, fetchPartnerData)
 
   </div>
 </template>
-
-<style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
-.font-serif { font-family: 'Playfair Display', serif; }
-.shadow-2xl { box-shadow: 0 25px 50px -12px rgba(38, 208, 206, 0.25); }
-</style>

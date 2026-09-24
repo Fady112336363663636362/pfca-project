@@ -13,7 +13,6 @@
       </div>
     </header>
 
-    <!-- أزرار تصفية التبويبات الفخمة -->
     <div class="container mx-auto px-6 py-12 flex justify-center gap-4">
       <button 
         v-for="tab in tabs" 
@@ -30,7 +29,6 @@
       </button>
     </div>
 
-    <!-- شبكة عرض الوسائط متجاوبة وتدعم الضغط للمعاينة الكبيرة -->
     <main class="container mx-auto px-6 md:px-12 lg:px-20">
       <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         <div v-for="i in 8" :key="i" class="aspect-[4/3] bg-gray-100 animate-pulse rounded-[1rem]"></div>
@@ -43,14 +41,12 @@
           @click="openLightbox(index)"
           class="group relative aspect-[4/3] rounded-[1rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-slate-50 cursor-pointer"
         >
-          <!-- الصورة المصغرة للشبكة -->
           <img 
             v-if="item.type === 'photo'" 
             :src="item.src" 
             class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
           />
 
-          <!-- الفيديو المصغر للشبكة -->
           <div v-else class="w-full h-full bg-slate-900 flex items-center justify-center">
              <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center text-white text-xl group-hover:scale-110 transition-transform">▶</div>
           </div>
@@ -59,16 +55,13 @@
         </div>
       </div>
 
-      <!-- حالة خلو الفلتر من البيانات -->
       <div v-else class="text-center py-20 text-slate-400 font-bold">
           {{ locale === 'en' ? 'No media items found in this category.' : 'لا توجد عناصر وسائط في هذا القسم حالياً.' }}
       </div>
     </main>
 
-    <!-- نظام المعاينة الفاخر والمسطح تماماً (بدون إطار أبيض أو حدود حول الصورة) -->
     <div v-if="isLightboxOpen" class="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center animate-in fade-in duration-300">
       
-      <!-- زر الإغلاق الدائري بالزاوية العلوية اليمنى للمتصفح -->
 <button @click="closeLightbox" class="absolute top-8 left-8 text-white/70 hover:text-white text-4xl p-4 transition-all z-[110] active:scale-95 cursor-pointer">✕</button>
       
       <!-- أسهم الانتقال الجانبية بالمنتصف (طافية في اليمين واليسار) لسهولة التبديل -->

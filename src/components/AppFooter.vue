@@ -23,7 +23,7 @@
         </div>
 
         <div class="space-y-6">
-          <h3 class="text-xl font-bold font-serif  tracking-wide text-white">
+          <h3 class="text-xl font-bold font-serif tracking-wide text-white">
             {{ locale === 'en' ? 'Important Links' : 'روابط هامة' }}
           </h3>
           <ul class="space-y-4 text-slate-400">
@@ -50,6 +50,7 @@
             {{ locale === 'en' ? 'Association Location' : 'موقع الجمعية' }}
           </h3>
           <div class="rounded-2xl overflow-hidden h-32 w-full relative group shadow-inner border border-slate-700/50">
+            <!-- تم تفعيل الفحص التلقائي لحماية الخريطة -->
             <iframe 
               :src="getEmbedUrl(getVal('google_maps_link'))" 
               class="w-full h-full border-none grayscale hover:grayscale-0 transition-all duration-500"
@@ -103,11 +104,20 @@ const fetchSettings = async () => {
 
 const getEmbedUrl = (link: string) => {
   if (!link) {
-    return 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13543.518600108398!2d35.44855215!3d31.8611145!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x15152b11b5e39b97%3A0x8dd34f8263595b45!2sJericho!5e0!3m2!1sen!2s!4v1715610000000!5m2!1sen!2s'
+    return 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13543.518600108398!2d35.44855215!3d31.8611145!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x15152b11b5e39b97%3A0x8dd34f8263595b45!2sJericho!5e0!3m2!1sen!2s'
   }
-  return link
+  
+  // 🟢 ذكاء اصطناعي مصغر: إذا كان المدخل كود إطار كامل، نستخرج رابط الـ src فقط بدقة بالغة 🟢
+  const iframeMatch = link.match(/src=["']([^"']+)["']/)
+  const cleanLink = iframeMatch ? iframeMatch[1] : link
+  
+  // حماية التصميم في حال كان الرابط يشير لموقع الجمعية الخاطئ
+  if (cleanLink.includes('wd-jo.com') || cleanLink.includes('pfca.ps') || cleanLink.includes('pfcabackend')) {
+    return 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13543.518600108398!2d35.44855215!3d31.8611145!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x15152b11b5e39b97%3A0x8dd34f8263595b45!2sJericho!5e0!3m2!1sen!2s'
+  }
+  
+  return cleanLink
 }
-
 const getVal = (key: string) => {
   return settings.value?.find(s => s.key === key)?.value || ''
 }
@@ -121,8 +131,3 @@ onMounted(() => {
   fetchSettings()
 })
 </script>
-
-<style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
-.font-serif { font-family: 'Playfair Display', serif; }
-</style>

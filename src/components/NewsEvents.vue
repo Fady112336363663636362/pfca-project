@@ -59,11 +59,13 @@
           class="bg-[#1e293b] hover:bg-slate-800 text-white px-10 py-3.5 md:py-4 rounded-full font-bold flex items-center gap-3 transition-all shadow-lg group/btn text-sm md:text-base"
           :class="locale === 'ar' ? 'flex-row-reverse' : ''"
         >
-          <span>{{ locale === 'en' ? 'View More' : 'عرض المزيد' }}</span>
-          <font-awesome-icon 
-            :icon="locale === 'en' ? 'fa-solid fa-arrow-right' : 'fa-solid fa-arrow-left'" 
+         <font-awesome-icon 
             class="text-xs transition-transform group-hover/btn:translate-x-1" 
+           :icon="locale === 'en' ? 'fa-solid fa-arrow-right' : 'fa-solid fa-arrow-left'" 
+
           />
+          <span>{{ locale === 'en' ? 'View More' : 'عرض المزيد' }}</span>
+         
         </RouterLink>
       </div>
 

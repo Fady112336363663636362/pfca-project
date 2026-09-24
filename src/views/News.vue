@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-[#F8FAFC] pb-24 font-sans" :class="locale === 'ar' ? 'text-right' : 'text-left'">
+  <div class="min-h-screen bg-[#F8FAFC] pb-24 font-sans" :dir="locale === 'ar' ? 'rtl' : 'ltr'">
     
     <!-- هيدر الصفحة متجاوب تماماً -->
     <header class="bg-[#293043] pt-32 pb-16 md:pt-40 md:pb-24 text-white text-center px-6">
@@ -8,7 +8,7 @@
           {{ locale === 'en' ? 'News & Events' : 'الأخبار والفعاليات' }}
         </h1>
         <p class="text-slate-300 text-lg md:text-xl max-w-2xl mx-auto font-light">
-          {{ locale === 'en' ? 'Stay updated with the latest from PFCA.' : 'ابقَ على اطلاع بأحدث أخبار وفعاليات الجمعية.' }}
+          {{ locale === 'en' ? 'Stay updated with the latest from PFCA.' : 'بقَ على اطلاع بأحدث أخبار وفعاليات الجمعية.' }}
         </p>
       </div>
     </header>
@@ -52,14 +52,13 @@
             />
             <div class="absolute top-3" :class="locale === 'ar' ? 'right-3' : 'left-3'">
               <span 
-              :class="[
-                (item.type || 'News') === 'News' ? 'bg-white/90 text-slate-800' : 'bg-[#26d0ce] text-white',
-                locale === 'ar' ? 'right-4' : 'left-4'
-              ]"
-              class="absolute top-4 px-4 py-1 rounded-full text-[10px] font-bold shadow-sm uppercase tracking-wider"
-            >
-              {{ (item.type || 'News') === 'News' ? (locale === 'en' ? 'News' : 'خبر') : (locale === 'en' ? 'Event' : 'فعالية') }}
-            </span>
+                :class="[
+                  String(item.type || 'news').toLowerCase() === 'event' || String(item.type || 'news').toLowerCase() === 'events' ? 'bg-[#26d0ce] text-white' : 'bg-white/90 text-slate-800',
+                ]"
+                class="px-3 py-1 rounded-full text-[10px] font-bold shadow-sm uppercase tracking-wider block"
+              >
+                {{ String(item.type || 'news').toLowerCase() === 'event' || String(item.type || 'news').toLowerCase() === 'events' ? (locale === 'en' ? 'Event' : 'فعالية') : (locale === 'en' ? 'News' : 'خبر') }}
+              </span>
             </div>
           </div>
 
@@ -88,7 +87,7 @@
         </RouterLink>
       </div>
 
-      <!-- 🟢 التعديل المطلوب: حاوية الحالات الفارغة (Empty State) بتصميم فخم ومترجم للغتين 🟢 -->
+      <!-- حاوية الحالات الفارغة (Empty State) بتصميم فخم ومترجم للغتين -->
       <div v-else class="py-16 px-6 bg-white rounded-[2rem] border border-slate-100 flex flex-col items-center justify-center text-center max-w-2xl mx-auto space-y-4 shadow-sm animate-in fade-in duration-300 mt-6">
         <div class="text-[#20CAC4] text-5xl mb-1">
           <font-awesome-icon v-if="activeFilter === 'News'" icon="fa-solid fa-newspaper" />
@@ -138,7 +137,6 @@ const fetchNews = async () => {
   }
 }
 
-// دالتا استخراج العناوين والترجمات المخصصة للحالات الفارغة لتبويبات الأخبار
 const getEmptyTitle = () => {
   if (activeFilter.value === 'News') {
     return locale.value === 'en' ? 'No news available' : 'لا توجد أخبار حالياً'
@@ -177,9 +175,13 @@ onMounted(() => {
 
 const filteredNews = computed(() => {
   if (activeFilter.value === 'All') return allNews.value
+  const filterLower = activeFilter.value.toLowerCase() 
+  
   return allNews.value.filter(item => {
-    const type = item.type || 'News'
-    return type === activeFilter.value || type === activeFilter.value.slice(0, -1)
+    const itemTypeLower = String(item.type || 'news').toLowerCase() 
+    return itemTypeLower === filterLower || 
+           filterLower.startsWith(itemTypeLower) || 
+           itemTypeLower.startsWith(filterLower.slice(0, -1))
   })
 })
 </script>

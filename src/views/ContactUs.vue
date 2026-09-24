@@ -31,8 +31,16 @@
                 class="w-full bg-white border border-slate-200 rounded-xl p-3 text-sm focus:outline-none focus:border-[#26d0ce] transition-all shadow-sm" />
               <p v-if="errors.fullName" class="text-red-500 text-[11px] font-bold mx-1">{{ errors.fullName }}</p>
             </div>
+   <div class="space-y-1.5">
+              <label class="text-xs font-bold text-slate-700 mx-1 uppercase tracking-wider">
+                {{ locale === 'en' ? 'Phone Number' : 'رقم الهاتف' }}
+              </label>
+              <input v-model="formData.phone" type="tel" :placeholder="locale === 'en' ? 'Your phone number' : 'رقم الهاتف'"
+                :class="{'border-red-500 ring-1 ring-red-100': errors.phone}"
+                class="w-full bg-white border border-slate-200 rounded-xl p-3 text-sm focus:outline-none focus:border-[#26d0ce] transition-all shadow-sm" />
+              <p v-if="errors.phone" class="text-red-500 text-[11px] font-bold mx-1">{{ errors.phone }}</p>
+            </div>
 
-            <!-- حقل البريد الإلكتروني -->
             <div class="space-y-1.5">
               <label class="text-xs font-bold text-slate-700 mx-1 uppercase tracking-wider">
                 {{ locale === 'en' ? 'Email Address' : 'البريد الإلكتروني' }}
@@ -43,7 +51,7 @@
               <p v-if="errors.email" class="text-red-500 text-[11px] font-bold mx-1">{{ errors.email }}</p>
             </div>
 
-            <!-- حقل موضوع الرسالة -->
+         
             <div class="space-y-1.5">
               <label class="text-xs font-bold text-slate-700 mx-1 uppercase tracking-wider">
                 {{ locale === 'en' ? 'Subject' : 'موضوع الرسالة' }}
@@ -54,7 +62,6 @@
               <p v-if="errors.subject" class="text-red-500 text-[11px] font-bold mx-1">{{ errors.subject }}</p>
             </div>
 
-            <!-- حقل نص الرسالة -->
             <div class="space-y-1.5">
               <label class="text-xs font-bold text-slate-700 mx-1 uppercase tracking-wider">
                 {{ locale === 'en' ? 'Message' : 'الرسالة' }}
@@ -65,7 +72,6 @@
               <p v-if="errors.message" class="text-red-500 text-[11px] font-bold mx-1">{{ errors.message }}</p>
             </div>
 
-            <!-- زر الإرسال التفاعلي مترجم -->
             <div class="pt-2">
               <button type="submit" :disabled="isSubmitting"
                 class="w-full bg-[#26d0ce] hover:bg-[#1fb5b3] text-white py-4 rounded-full text-base font-bold shadow-lg shadow-teal-500/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50">
@@ -77,10 +83,8 @@
           </form>
         </div>
 
-        <!-- العمود الجانبي (مربط بالكامل بالـ API ولا يعرض أي حقل فارغ في السيرفر) -->
         <div class="lg:col-span-5 space-y-5">
           <div v-for="(info, index) in contactInfo" :key="index">
-            <!-- شرط v-if يضمن عدم ظهور الكارد إذا كانت القيمة فارغة بالسيرفر -->
             <div v-if="info.detail" class="bg-[#F5F7FA] p-5 rounded-[1rem] flex items-center gap-5 border border-slate-50 transition-all hover:bg-white hover:shadow-md group">
               <div class="w-12 h-12 bg-white text-[#26d0ce] rounded-xl flex items-center justify-center text-lg shadow-sm group-hover:bg-[#26d0ce] group-hover:text-white transition-colors shrink-0">
                 <font-awesome-icon :icon="info.icon" />
@@ -92,10 +96,9 @@
             </div>
           </div>
 
-          <!-- الخريطة تظهر فقط إذا كان هناك رابط مضاف في الداشبورد -->
           <div v-if="getVal('google_maps_link')" class="bg-white rounded-[1rem] overflow-hidden shadow-sm border border-slate-100 h-[300px] relative group animate-in fade-in duration-300">
-            <iframe 
-              :src="getVal('google_maps_link')" 
+           <iframe 
+              :src="getEmbedUrl(getVal('google_maps_link'))" 
               class="w-full h-full border-none grayscale hover:grayscale-0 transition-all duration-700"
               allowfullscreen="" loading="lazy"></iframe>
           </div>
@@ -116,6 +119,7 @@ const { locale } = useI18n()
 const formData = ref({
   fullName: '',
   email: '',
+  phone: '', 
   subject: '',
   message: ''
 })
@@ -123,6 +127,7 @@ const formData = ref({
 const errors = ref({
   fullName: '',
   email: '',
+  phone: '', 
   subject: '',
   message: ''
 })
@@ -143,7 +148,21 @@ const getVal = (key: string) => {
   return settings.value?.find(s => s.key === key)?.value || ''
 }
 
-// قراءة بيانات الاتصال من السيرفر مباشرة دون أي قيم افتراضية صلبة
+const getEmbedUrl = (link: string) => {
+  if (!link) {
+    return 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13543.518600108398!2d35.44855215!3d31.8611145!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x15152b11b5e39b97%3A0x8dd34f8263595b45!2sJericho!5e0!3m2!1sen!2s'
+  }
+  
+  const iframeMatch = link.match(/src=["']([^"']+)["']/)
+  const cleanLink = iframeMatch ? iframeMatch[1] : link
+  
+  if (cleanLink.includes('wd-jo.com') || cleanLink.includes('pfca.ps') || cleanLink.includes('pfcabackend')) {
+    return 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13543.518600108398!2d35.44855215!3d31.8611145!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x15152b11b5e39b97%3A0x8dd34f8263595b45!2sJericho!5e0!3m2!1sen!2s'
+  }
+
+  return cleanLink
+}
+
 const contactInfo = computed(() => [
   { 
     title: locale.value === 'en' ? 'Address' : 'العنوان', 
@@ -163,7 +182,7 @@ const contactInfo = computed(() => [
 ])
 
 const handleSubmit = async () => {
-  errors.value = { fullName: '', email: '', subject: '', message: '' }
+  errors.value = { fullName: '', email: '', phone: '', subject: '', message: '' }
   let isValid = true
 
   if (!formData.value.fullName) { 
@@ -172,6 +191,10 @@ const handleSubmit = async () => {
   }
   if (!formData.value.email) { 
     errors.value.email = locale.value === 'en' ? 'Email Address is required' : 'البريد الإلكتروني مطلوب'
+    isValid = false 
+  }
+  if (!formData.value.phone) { 
+    errors.value.phone = locale.value === 'en' ? 'Phone Number is required' : 'رقم الهاتف مطلوب'
     isValid = false 
   }
   if (!formData.value.subject) { 
@@ -189,12 +212,13 @@ const handleSubmit = async () => {
       await apiClient.post('/contact', {
         name: formData.value.fullName,
         email: formData.value.email,
+        phone: formData.value.phone, 
         subject: formData.value.subject,
         message: formData.value.message
       })
       
       alert(locale.value === 'en' ? '✅ Your message has been sent successfully!' : '✅ تم إرسال رسالتك بنجاح!')
-      formData.value = { fullName: '', email: '', subject: '', message: '' }
+      formData.value = { fullName: '', email: '', phone: '', subject: '', message: '' }
     } catch (error) {
       alert(locale.value === 'en' ? '❌ Failed to send message. Please try again later.' : '❌ فشل إرسال الرسالة. يرجى المحاولة لاحقاً.')
     } finally {
@@ -206,3 +230,7 @@ const handleSubmit = async () => {
 onMounted(fetchSettings)
 </script>
 
+<style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
+.font-serif { font-family: 'Playfair Display', serif; }
+</style>
